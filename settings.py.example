@@ -1,0 +1,25 @@
+
+TITLE = '<Repository>'
+
+CHART_SIZE = 90 # Maybe Google limit?
+CHARSET = 'utf-8'
+
+TEMPLATE_FILE = 'template.html'
+INPUT_FILE = 'log.txt' # None for stdin
+OUTPUT_FILE = None # None for stdout
+AUTHOR_FILE = 'authors.txt'
+
+COMMIT_URL = 'http://github.com/<id>/<repo>/commit/{commit}'
+
+ACTIVE_DAYS = 30
+
+ALIASES = {
+	'a@example.com': 'b@example.com', # Make a@ as alias of b@
+}
+
+GROUPS = [
+	{
+		'name': 'Group name',
+		'filter': lambda author: False, # any filter
+	}
+]

@@ -1,0 +1,174 @@
+<html>
+  <head>
+    <style>
+        .fixed { font-family: "Monospace" };
+    </style>
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+
+      // Load the Visualization API and the piechart package.
+      google.load('visualization', '1.0', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.setOnLoadCallback(drawImpact);
+      google.setOnLoadCallback(drawRate);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawImpact() {
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Author');
+        data.addColumn('number', 'Commit Impact');
+        data.addRows([
+        {%- for author in authors[:size] %}
+          ['({{ author.commits|length }}) {{ author.name }}', {{ author.commit_impact }}],
+        {%- endfor %}
+          ['({{ others.commits|length }}) Other {{ others.names|length }} users', {{ others.commit_impact }}]
+        ]);
+
+        // Set chart options
+        var options = {'title':'Commit Impact (Natural log of Commits)',
+                       'width':600,
+                       'height':200 + {{ size }} * 25};
+
+        // Instantiate and draw our chart, passing in some options.
+        var chart = new google.visualization.BarChart(document.getElementById('chart_impact'));
+        chart.draw(data, options);
+      }
+
+      function drawRate() {
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Author');
+        data.addColumn('number', 'Commit Impact');
+        data.addRows([
+        {%- for author in authors[:size] %}
+          ['({{ author.commits|length }}) {{ author.name }}', {{author.commits|length}}],
+        {%- endfor %}
+          ['({{ others.commits|length }}) Other {{ others.names|length }} users', {{ others.commits|length }}]
+        ]);
+
+        // Set chart options
+        var options = {'title':'Commit Rate',
+                       'width':600,
+                       'height':400};
+
+        // Instantiate and draw our chart, passing in some options.
+        var chart = new google.visualization.PieChart(document.getElementById('chart_rate'));
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+
+  <body>
+    <div style="width:1000px;">
+      <div id="chart" style="float:right; width: 600px;">
+        <menu id="toc" style="border:1px"><h1>Index</h1>
+        <ol>
+          <li><a href="#abstract">Abstract</a></li>
+          <li><a href="#group">Authors by Group</a></li>
+          <li><a href="#author">Author Index</a></li>
+        </ol>
+        </menu>
+        <div id="chart_rate"></div>
+        <div id="chart_impact"></div>
+      </div>
+      <header id="top">
+        <h1>{{ title }} Repository status</h1>
+      </header>
+      {% set TOP = '<aside style="float:right">[<a href="#top">#Top</a>]</aside>' %}
+      <div style="width:400px;">
+        <section id="abstract">{{ TOP }}<h1>Abstract</h1>
+        <ul>
+          <li>Statistics from {{ total.commits[-1].date.short }} to {{ total.commits[0].date.short }}</li>
+          <li>{{ authors|length }} identical contributers</li>
+          <li>{{ total.commits|length }} commits</li>
+          <li>{{ actives.authors|length }} active contributers in {{ ACTIVE_DAYS }} days</li>
+          <li>And they contributes {{ active_commits.commits|length }} commits</li>
+          <li>{{ newfaces.authors|length }} new contributers in {{ ACTIVE_DAYS }} days</li>
+          <li>And they contributes {{ newfaces.commits|length }} commits</li>
+        </ul>
+        </section>
+            
+        <section id="group">{{ TOP }}<h1>Author by Group</h1>
+          {% for group in [actives, newfaces] + groups.values() %}
+          {% if group.authors|length %}
+          <section id="group-{{ group.groupname }}">{{ TOP }}<h1>{{ group.groupname }}</h1>
+          <ul>
+            <li>{{ group.authors|length }} users contributes {{ group.commits|length }} commits.</li>
+            <li>{{ (group.authors|length * 100 / authors|length)|round(1) }}% of users</li>
+            <li>{{ (group.commits|length * 100 / total.commits|length)|round(1) }}% of commits, impacts {{ group.commit_impact }} of {{ total.commit_impact }}</li>
+          </ul>
+          <p>Members are: {% for author in group.authors %}<a href="#author-{{ author.tag }}">{{ author.names[0] }}</a> {% endfor %}</p>
+          </section>
+          {% endif %}
+          {% endfor %}
+        </section>
+          
+        <section id="author">{{ TOP }}<h1>Author Index</h1>
+        <ul>
+        {%- for author in authors %}
+          <li>#{{ author.rank }} <a href="#author-{{ author.tag }}">{{ author.name }}</a>({{ author.commits|length }} commits
+            {%- if author in newfaces.authors %}, <span style="color:red">New!</span>{% elif author in actives.authors %}, <span style="color:blue">Active!</span>{% endif -%}
+          )</li>
+        {%- endfor %}
+        </ul>
+        </section> 
+      </div>
+      <section>{{ TOP }}<h1>Authors</h1>
+      {% for author in authors %}
+        <section id="author-{{ author.tag }}" class="fixed">{{ TOP }}<h1 id="{{ author.names[0] }}">{{ author.names[0] }}</h1>
+          <section>
+          <dl>
+            {% if author.names|length > 1 %}
+            <dt>Other names:</dt>
+              <dd>{% for name in author.names[1:] %}{{ name }} {% endfor %}</dd>
+            {% endif %}
+            <dt>Commit Count:<dt>
+              <dd>{{ author.commits|length }} (#{{ author.rank }})</dd>
+            <dt>Commit Rate:<dt>
+              <dd>{{ (author.commits|length * 100 / total.commits|length) |round(1) }}%</dd>
+            <dt>Commit Impact:</dt>
+              <dd>{{ author.commit_impact }} of {{ total.commit_impact }} </dd>
+            <dt>Search on Github:</dt>
+              <dd><a href="https://github.com/search?q={{ author.names[0] }}&type=Users">{{ author.names[0] }} on Github</a></dd>
+          </dl>
+          </section>
+          <section><h1>Commits</h1>
+          <ul>
+            <li>
+            {% for commit in author.commits[:101] -%}
+            {% if loop.index <= 100 -%}
+              <a href="{{ commit.url }}" title="{{ commit.title }}">{{ commit.id[:7] }}</a>
+              {%- if loop.index <= 10 %}: {{ commit.date.short }} {{ commit.title }}
+                {%- if commit.content -%}
+                  {% if loop.first -%}
+                    <dl><dd>{{ commit.content }}</dd></dl>
+                  {%- else -%}
+                    (<abbr title="{{ commit.content }}">...</abbr>)
+                  {%- endif %}
+                {% endif -%}
+                {% if commit.mergeset %}
+                  <ul><li>++merge++ {% for merge in commit.mergeset %}<a href="{{ merge.url }}" title="{{ merge.title }}">{{ merge.id[:7] }}</a>{% if author.email != merge.author.email %}({{ merge.author.name }}){% endif %}{% if not loop.last %} + {% endif %}{% endfor %}</li></ul>
+                {% endif %}
+                {% if not loop.last %}</li><li>{% endif -%}
+              {% else %} {% endif -%}
+            {%- else -%}
+              and other {{ author.commits|length - 100 }} commits.
+            {%- endif %}
+            {%- endfor %}
+            </li>
+          </ul>
+          </section>
+        </section>
+      {% endfor %}
+      </section>
+      <footer>
+        <p>Generated by <a href="https://github.com/youknowone/gitstat">gitstat</a></p>
+      </footer>
+    </div>
+  </body>
+</html>
