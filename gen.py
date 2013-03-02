@@ -251,6 +251,8 @@ for i, (rank, author) in enumerate(Author.ranks()):
     for group in groups.values():
         if group.settings['filter'](author):
             group.authors.append(author)
+if not real_size:
+    real_size = i
 
 rendered = template.render(title=TITLE, size=real_size, authors=authors, others=others, total=total, actives=actives, active_commits=active_commits, newfaces=newfaces, ACTIVE_DAYS=ACTIVE_DAYS, groups=groups)
 

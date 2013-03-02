@@ -24,9 +24,11 @@
         data.addColumn('number', 'Commit Impact');
         data.addRows([
         {%- for author in authors[:size] %}
-          ['({{ author.commits|length }}) {{ author.name }}', {{ author.commit_impact }}],
+          ['({{ author.commits|length }}) {{ author.name }}', {{ author.commit_impact }}]{% if not loop.last %},{% endif %}
         {%- endfor %}
-          ['({{ others.commits|length }}) Other {{ others.names|length }} users', {{ others.commit_impact }}]
+        {% if others.authors|length > 0 %}
+          ,['({{ others.commits|length }}) Other {{ others.names|length }} users', {{ others.commit_impact }}]
+        {% endif %}
         ]);
 
         // Set chart options
@@ -46,9 +48,11 @@
         data.addColumn('number', 'Commit Impact');
         data.addRows([
         {%- for author in authors[:size] %}
-          ['({{ author.commits|length }}) {{ author.name }}', {{author.commits|length}}],
+          ['({{ author.commits|length }}) {{ author.name }}', {{author.commits|length}}]{% if not loop.last %},{% endif %}
         {%- endfor %}
-          ['({{ others.commits|length }}) Other {{ others.names|length }} users', {{ others.commits|length }}]
+        {% if others.authors|length > 0 %}
+          ,['({{ others.commits|length }}) Other {{ others.names|length }} users', {{ others.commits|length }}]
+        {% endif %}
         ]);
 
         // Set chart options
