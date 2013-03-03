@@ -29,6 +29,14 @@
         {% if others.authors|length > 0 %}
           ,['({{ others.commits|length }}) Other {{ others.names|length }} users', {{ others.commit_impact }}]
         {% endif %}
+        {% for group in [actives, newfaces] + groups %}
+        {% if loop.first %}
+          ,['-- groups --', 0]
+        {% endif %}
+        {% if group.authors|length > 0 %}
+          ,['({{ group.commits|length }}) {{ group.groupname }} group {{ group.authors|length }} users', {{ group.commit_impact }}]
+        {% endif %}
+        {% endfor %}
         ]);
 
         // Set chart options
@@ -45,7 +53,7 @@
         // Create the data table.
         var data = new google.visualization.DataTable();
         data.addColumn('string', 'Author');
-        data.addColumn('number', 'Commit Impact');
+        data.addColumn('number', 'Commit Count');
         data.addRows([
         {%- for author in authors[:size] %}
           ['({{ author.commits|length }}) {{ author.name }}', {{author.commits|length}}]{% if not loop.last %},{% endif %}
@@ -91,18 +99,18 @@
           <li>{{ authors|length }} identical contributers</li>
           <li>{{ total.commits|length }} commits</li>
           <li>{{ actives.authors|length }} active contributers in {{ ACTIVE_DAYS }} days</li>
-          <li>And they contributes {{ active_commits.commits|length }} commits</li>
+          <li>And they contribute {{ active_commits.commits|length }} commits</li>
           <li>{{ newfaces.authors|length }} new contributers in {{ ACTIVE_DAYS }} days</li>
-          <li>And they contributes {{ newfaces.commits|length }} commits</li>
+          <li>And they contribute {{ newfaces.commits|length }} commits</li>
         </ul>
         </section>
             
         <section id="group">{{ TOP }}<h1>Author by Group</h1>
-          {% for group in [actives, newfaces] + groups.values() %}
+          {% for group in [actives, newfaces] + groups %}
           {% if group.authors|length %}
           <section id="group-{{ group.groupname }}">{{ TOP }}<h1>{{ group.groupname }}</h1>
           <ul>
-            <li>{{ group.authors|length }} users contributes {{ group.commits|length }} commits.</li>
+            <li>{{ group.authors|length }} users contribute {{ group.commits|length }} commits.</li>
             <li>{{ (group.authors|length * 100 / authors|length)|round(1) }}% of users</li>
             <li>{{ (group.commits|length * 100 / total.commits|length)|round(1) }}% of commits, impacts {{ group.commit_impact }} of {{ total.commit_impact }}</li>
           </ul>
@@ -131,14 +139,18 @@
             <dt>Other names:</dt>
               <dd>{% for name in author.names[1:] %}{{ name }} {% endfor %}</dd>
             {% endif %}
+            <dt>Groups:</dt>
+              <dd>{% for group in [actives, newfaces] + groups %}{% if author in group.authors %}<a href="#group-{{ group.groupname }}">{{ group.groupname }}</a> {% endif %}{% endfor %}</dd>
             <dt>Commit Count:<dt>
               <dd>{{ author.commits|length }} (#{{ author.rank }})</dd>
             <dt>Commit Rate:<dt>
               <dd>{{ (author.commits|length * 100 / total.commits|length) |round(1) }}%</dd>
             <dt>Commit Impact:</dt>
               <dd>{{ author.commit_impact }} of {{ total.commit_impact }} </dd>
+            <dt>Groups:</dt>
+              <dd></dd>
             <dt>Search on Github:</dt>
-              <dd><a href="https://github.com/search?q={{ author.names[0] }}&type=Users">{{ author.names[0] }} on Github</a></dd>
+              <dd><a href="https://github.com/search?q={{ author.names[0] }}&type=Users">{{ author.names[0] }} on Github</a> or <a href="https://github.com/search?q={{ author.email.split('@')[0] }}&type=Users">{{ author.email.split('@')[0] }} on Github</a></dd>
           </dl>
           </section>
           <section><h1>Commits</h1>

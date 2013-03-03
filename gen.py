@@ -236,7 +236,7 @@ for i, (rank, author) in enumerate(Author.ranks()):
     author.tag = author.safe_email
     author.rank = round(rank, 1)
     authors.append(author)
-    if i > CHART_SIZE:
+    if i > CHART_SIZE - (len(groups) + 2):
         if not real_size:
             real_size = i
         others.authors.append(author)
@@ -254,7 +254,10 @@ for i, (rank, author) in enumerate(Author.ranks()):
 if not real_size:
     real_size = i
 
-rendered = template.render(title=TITLE, size=real_size, authors=authors, others=others, total=total, actives=actives, active_commits=active_commits, newfaces=newfaces, ACTIVE_DAYS=ACTIVE_DAYS, groups=groups)
+sorted_groups = groups.values()
+sorted_groups.sort(key=lambda group: -group.settings.get('priority', 0) * 0x1000000 - len(group.commits))
+
+rendered = template.render(title=TITLE, size=real_size, authors=authors, others=others, total=total, actives=actives, active_commits=active_commits, newfaces=newfaces, ACTIVE_DAYS=ACTIVE_DAYS, groups=sorted_groups)
 
 if OUTPUT_FILE:
     outfile = lopen(OUTPUT_FILE, 'w')
