@@ -269,7 +269,7 @@ for i, (rank, author) in enumerate(Author.ranks()):
         if group.settings['filter'](author):
             group.authors.append(author)
 if not real_size:
-    real_size = i
+    real_size = i + 1
 
 sorted_groups = groups.values()
 sorted_groups.sort(key=lambda group: -group.settings.get('priority', 0) * 0x1000000 - len(group.commits))
