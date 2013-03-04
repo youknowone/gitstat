@@ -1,5 +1,6 @@
 
 TITLE = '<Repository>'
+REPO_URL = ''
 
 CHART_SIZE = 90 # Maybe Google limit?
 CHARSET = 'utf-8'

@@ -99,9 +99,10 @@ class Author(object):
 
 
 class Group(Author):
-    def __init__(self, name=''):
+    def __init__(self, name='', description=''):
         self.groupname = name
         self.authors = []
+        self._description = description
 
     @property
     def email(self):
@@ -125,6 +126,22 @@ class Group(Author):
         for author in self.authors:
             l += author.commits
         return l
+
+    @property
+    def description(self):
+        if self._description:
+            return self._description
+        try:
+            return self.settings['description']
+        except:
+            return ''
+    
+    @property
+    def url(self):
+        try:
+            return self.settings['url']
+        except:
+            return None
 
 
 class Date(object):
@@ -221,8 +238,8 @@ timebase = total.commits[0].date.date - datetime.timedelta(days=ACTIVE_DAYS)
 authors = []
 real_size = 0
 others = Group('other')
-actives = Group('Active users')
-newfaces = Group('Newfaces')
+actives = Group('Active users', 'Users who contributed in the last {0} days'.format(ACTIVE_DAYS))
+newfaces = Group('Newfaces', 'Users who contributed his/her first commit in the last {0} days'.format(ACTIVE_DAYS))
 
 active_commits = Author('active')
 
@@ -257,7 +274,14 @@ if not real_size:
 sorted_groups = groups.values()
 sorted_groups.sort(key=lambda group: -group.settings.get('priority', 0) * 0x1000000 - len(group.commits))
 
-rendered = template.render(title=TITLE, size=real_size, authors=authors, others=others, total=total, actives=actives, active_commits=active_commits, newfaces=newfaces, ACTIVE_DAYS=ACTIVE_DAYS, groups=sorted_groups)
+rendered = template.render(
+    TITLE=TITLE, REPO_URL=REPO_URL,
+    ACTIVE_DAYS=ACTIVE_DAYS,
+    size=real_size, authors=authors, others=others, total=total,
+    actives=actives, active_commits=active_commits, newfaces=newfaces,
+    groups=sorted_groups,
+    numformat=lambda n: '{:,}'.format(n),
+)
 
 if OUTPUT_FILE:
     outfile = lopen(OUTPUT_FILE, 'w')

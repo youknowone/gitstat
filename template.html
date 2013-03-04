@@ -1,5 +1,7 @@
 <html>
   <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{{ TITLE }} - gitstat</title>
     <style>
         .fixed { font-family: "Monospace" };
     </style>
@@ -56,7 +58,7 @@
         data.addColumn('number', 'Commit Count');
         data.addRows([
         {%- for author in authors[:size] %}
-          ['({{ author.commits|length }}) {{ author.name }}', {{author.commits|length}}]{% if not loop.last %},{% endif %}
+          ['({{ author.commits|length }}) {{ author.name }}', {{ author.commits|length }}]{% if not loop.last %},{% endif %}
         {%- endfor %}
         {% if others.authors|length > 0 %}
           ,['({{ others.commits|length }}) Other {{ others.names|length }} users', {{ others.commits|length }}]
@@ -80,28 +82,32 @@
       <div id="chart" style="float:right; width: 600px;">
         <menu id="toc" style="border:1px"><h1>Index</h1>
         <ol>
-          <li><a href="#abstract">Abstract</a></li>
+          <li><a href="#summary">Summary</a></li>
           <li><a href="#group">Authors by Group</a></li>
-          <li><a href="#author">Author Index</a></li>
+          <li><a href="#index">Author Index</a></li>
+          <li><a href="#author">Authors</a></li>
         </ol>
         </menu>
         <div id="chart_rate"></div>
         <div id="chart_impact"></div>
       </div>
       <header id="top">
-        <h1>{{ title }} Repository status</h1>
+        <h1>{{ TITLE }} Repository status</h1>
+        {% if REPO_URL %}
+        <p><a href="{{ REPO_URL }}">{{ REPO_URL }}</a></p>
+        {% endif %}
       </header>
       {% set TOP = '<aside style="float:right">[<a href="#top">#Top</a>]</aside>' %}
       <div style="width:400px;">
-        <section id="abstract">{{ TOP }}<h1>Abstract</h1>
+        <section id="summary">{{ TOP }}<h1>Summary</h1>
         <ul>
           <li>Statistics from {{ total.commits[-1].date.short }} to {{ total.commits[0].date.short }}</li>
-          <li>{{ authors|length }} identical contributers</li>
-          <li>{{ total.commits|length }} commits</li>
-          <li>{{ actives.authors|length }} active contributers in {{ ACTIVE_DAYS }} days</li>
-          <li>And they contribute {{ active_commits.commits|length }} commits</li>
-          <li>{{ newfaces.authors|length }} new contributers in {{ ACTIVE_DAYS }} days</li>
-          <li>And they contribute {{ newfaces.commits|length }} commits</li>
+          <li>{{ numformat(authors|length) }} contributors</li>
+          <li>{{ numformat(total.commits|length) }} commits</li>
+          <li>{{ actives.authors|length }} active contributors in {{ ACTIVE_DAYS }} days</li>
+          <li>And they contributed {{ active_commits.commits|length }} commits</li>
+          <li>{{ newfaces.authors|length }} new contributors in {{ ACTIVE_DAYS }} days</li>
+          <li>And they contributed {{ newfaces.commits|length }} commits</li>
         </ul>
         </section>
             
@@ -109,8 +115,14 @@
           {% for group in [actives, newfaces] + groups %}
           {% if group.authors|length %}
           <section id="group-{{ group.groupname }}">{{ TOP }}<h1>{{ group.groupname }}</h1>
+          {% if group.url %}
+          <p><a href="{{ group.url }}">{{ group.url }}</a>
+          {% endif %}
+          {% if group.description %}
+          <p>{{ group.description }}</p>
+          {% endif %}
           <ul>
-            <li>{{ group.authors|length }} users contribute {{ group.commits|length }} commits.</li>
+            <li>{{ group.authors|length }} users contributed {{ numformat(group.commits|length) }} commits</li>
             <li>{{ (group.authors|length * 100 / authors|length)|round(1) }}% of users</li>
             <li>{{ (group.commits|length * 100 / total.commits|length)|round(1) }}% of commits, impacts {{ group.commit_impact }} of {{ total.commit_impact }}</li>
           </ul>
@@ -120,7 +132,7 @@
           {% endfor %}
         </section>
           
-        <section id="author">{{ TOP }}<h1>Author Index</h1>
+        <section id="index">{{ TOP }}<h1>Author Index</h1>
         <ul>
         {%- for author in authors %}
           <li>#{{ author.rank }} <a href="#author-{{ author.tag }}">{{ author.name }}</a>({{ author.commits|length }} commits
@@ -130,7 +142,7 @@
         </ul>
         </section> 
       </div>
-      <section>{{ TOP }}<h1>Authors</h1>
+      <section id="author">{{ TOP }}<h1>Authors</h1>
       {% for author in authors %}
         <section id="author-{{ author.tag }}" class="fixed">{{ TOP }}<h1 id="{{ author.names[0] }}">{{ author.names[0] }}</h1>
           <section>
