@@ -70,6 +70,10 @@ class Author(object):
         return self.email.replace('@', '-a-').replace('.', '-o-')
 
     @classmethod
+    def from_email(cls, email):
+        return cls.dictionary[email]
+
+    @classmethod
     def from_data(cls, data):
         m = re.search(r'(.*) <(.*)>', data)
         name, email = m.group(1).decode(CHARSET), m.group(2).decode(CHARSET)
@@ -95,6 +99,8 @@ class Author(object):
         authors = cls.dictionary.values()
         authors.sort(key=lambda author: -len(author.commits))
         for rank, author in ranking.Ranking(authors, strategy=ranking.FRACTIONAL, start=1, key=lambda author: len(author.commits)):
+            if not author.commits:
+                continue
             yield rank, author
 
 
@@ -222,16 +228,22 @@ class Commit(object):
         obj = cls(id, author, date, title.decode(CHARSET), content, merge_ids)
         cls.dictionary[id] = obj
         cls.short_dictionary[id[:7]] = obj
-        author.commits.append(obj)
         return obj
 
 
 total = Author('total')
 active_commits = []
+merge_commits = {}
 for cdata in data.split('\ncommit '):
     if not cdata: continue
     commit = Commit.from_data(cdata)
-    total.commits.append(commit)
+    if not commit.merge_ids:
+        commit.author.commits.append(commit)
+        total.commits.append(commit)
+    else:
+        if commit.author.email not in merge_commits:
+            merge_commits[commit.author.email] = []
+        merge_commits[commit.author.email].append(commit)
 
 timebase = total.commits[0].date.date - datetime.timedelta(days=ACTIVE_DAYS)
 
@@ -274,12 +286,16 @@ if not real_size:
 sorted_groups = groups.values()
 sorted_groups.sort(key=lambda group: -group.settings.get('priority', 0) * 0x1000000 - len(group.commits))
 
+mauthors = [Author.from_email(email) for email in merge_commits]
+mauthors.sort(key=lambda author: -len(merge_commits[author.email]))
+mcommits = reduce(lambda a, b: a + b, merge_commits.values(), [])
+
 rendered = template.render(
     TITLE=TITLE, REPO_URL=REPO_URL,
     ACTIVE_DAYS=ACTIVE_DAYS,
     size=real_size, authors=authors, others=others, total=total,
     actives=actives, active_commits=active_commits, newfaces=newfaces,
-    groups=sorted_groups,
+    groups=sorted_groups, mauthors=mauthors, mcommits=mcommits, mcommitd=merge_commits,
     numformat=lambda n: '{:,}'.format(n),
 )
 

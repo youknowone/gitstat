@@ -108,6 +108,7 @@
           <li>And they contributed {{ active_commits.commits|length }} commits</li>
           <li>{{ newfaces.authors|length }} new contributors in {{ ACTIVE_DAYS }} days</li>
           <li>And they contributed {{ newfaces.commits|length }} commits</li>
+          <li>{{ mauthors|length }} mergers merged {{ mcommits|length }} commits</li>
         </ul>
         </section>
             
@@ -130,6 +131,18 @@
           </section>
           {% endif %}
           {% endfor %}
+          <section id="group-merge">{{ TOP }}<h1>Mergers</h1>
+          <ul>
+            <li>{{ mauthors|length }} users merged {{ mcommits|length }} commits</li>
+            <li>{{ (mcommits|length * 100 / total.commits|length)|round(1) }}% of commits, but not counted in total</li>
+          </ul>
+          <p>Members are:</p>
+          <ul>
+            {% for author in mauthors %}
+            <li><a href="#author-{{ author.safe_email }}">{{ author.name }}</a> merged {{ mcommitd[author.email]|length }} commits</li>
+            {% endfor %}
+          </ul>
+          </section>
         </section>
           
         <section id="index">{{ TOP }}<h1>Author Index</h1>
