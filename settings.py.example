@@ -15,12 +15,12 @@ COMMIT_URL = 'http://github.com/<id>/<repo>/commit/{commit}'
 ACTIVE_DAYS = 30
 
 ALIASES = {
-	'a@example.com': 'b@example.com', # Make a@ as alias of b@
+    'a@example.com': 'b@example.com', # Make a@ as alias of b@
 }
 
 GROUPS = [
-	{
-		'name': 'Group name',
-		'filter': lambda author: False, # any filter
-	}
+    {
+        'name': 'Group name',
+        'filter': lambda author: False, # any filter
+    }
 ]
