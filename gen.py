@@ -296,6 +296,7 @@ rendered = template.render(
     size=real_size, authors=authors, others=others, total=total,
     actives=actives, active_commits=active_commits, newfaces=newfaces,
     groups=sorted_groups, mauthors=mauthors, mcommits=mcommits, mcommitd=merge_commits,
+    gentime=str(datetime.datetime.now()),
     numformat=lambda n: '{:,}'.format(n),
 )
 
