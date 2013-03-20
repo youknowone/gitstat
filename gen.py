@@ -49,6 +49,8 @@ class Author(object):
 
     @property
     def name(self):
+        if self.email in NAMES:
+            return NAMES[self.email]
         namelen = len(self.names)
         if namelen == 1:
             return self.names[0]
