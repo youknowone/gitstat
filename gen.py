@@ -310,7 +310,7 @@ outfile.write(rendered.encode(CHARSET))
 
 if AUTHOR_FILE:
     authors = list(Author.dictionary.values())
-    authors.sort(key=lambda author: author.name)
+    authors.sort(key=lambda author: author.name.lower())
     authorfile = lopen(AUTHOR_FILE, 'w')
     for author in authors:
         authorfile.write(u'{name} <{email}>\n'.format(name=author.name, email=author.email).encode(CHARSET))
