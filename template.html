@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>{{ TITLE }} - gitstat</title>
+    <title>{{ settings.TITLE }} - gitstat</title>
     <style>
         .fixed { font-family: "Monospace" };
     </style>
@@ -92,9 +92,9 @@
         <div id="chart_impact"></div>
       </div>
       <header id="top">
-        <h1>{{ TITLE }} Repository status</h1>
-        {% if REPO_URL %}
-        <p><a href="{{ REPO_URL }}">{{ REPO_URL }}</a></p>
+        <h1>{{ settings.TITLE }} Repository status</h1>
+        {% if settings.REPO_URL %}
+        <p><a href="{{ settings.REPO_URL }}">{{ settings.REPO_URL }}</a></p>
         {% endif %}
       </header>
       {% set TOP = '<aside style="float:right">[<a href="#top">#Top</a>]</aside>' %}
@@ -104,9 +104,9 @@
           <li>Statistics from {{ total.commits[-1].date.short }} to {{ total.commits[0].date.short }}</li>
           <li>{{ numformat(authors|length) }} contributors</li>
           <li>{{ numformat(total.commits|length) }} commits</li>
-          <li>{{ actives.authors|length }} active contributors in {{ ACTIVE_DAYS }} days</li>
+          <li>{{ actives.authors|length }} active contributors in {{ settings.ACTIVE_DAYS }} days</li>
           <li>And they contributed {{ active_commits.commits|length }} commits</li>
-          <li>{{ newfaces.authors|length }} new contributors in {{ ACTIVE_DAYS }} days</li>
+          <li>{{ newfaces.authors|length }} new contributors in {{ settings.ACTIVE_DAYS }} days</li>
           <li>And they contributed {{ newfaces.commits|length }} commits</li>
           <li>{{ mauthors|length }} mergers merged {{ mcommits|length }} commits</li>
         </ul>

@@ -14,7 +14,7 @@ import re
 import ranking
 import jinja2
 
-from settings import *
+import settings
 
 def lpath(path):
     return ROOT_PATH + path
@@ -22,11 +22,11 @@ def lpath(path):
 def lopen(path, mode='r'):
     return open(lpath(path), mode)
 
-template_data = lopen(TEMPLATE_FILE).read()
+template_data = lopen(settings.TEMPLATE_FILE).read()
 template = jinja2.Template(template_data)
 
-if INPUT_FILE:
-    infile = lopen(INPUT_FILE)
+if settings.INPUT_FILE:
+    infile = lopen(settings.INPUT_FILE)
 else:
     infile = sys.stdin
 
@@ -49,8 +49,8 @@ class Author(object):
 
     @property
     def name(self):
-        if self.email in NAMES:
-            return NAMES[self.email]
+        if self.email in settings.NAMES:
+            return settings.NAMES[self.email]
         namelen = len(self.names)
         if namelen == 1:
             return self.names[0]
@@ -78,10 +78,10 @@ class Author(object):
     @classmethod
     def from_data(cls, data):
         m = re.search(r'(.*) <(.*)>', data)
-        name, email = m.group(1).decode(CHARSET), m.group(2).decode(CHARSET)
-        if email in ALIASES:
+        name, email = m.group(1).decode(settings.CHARSET), m.group(2).decode(settings.CHARSET)
+        if email in settings.ALIASES:
             omail = email
-            email = ALIASES[email]
+            email = settings.ALIASES[email]
         else:
             omail = None
 
@@ -206,7 +206,7 @@ class Commit(object):
 
     @property
     def url(self):
-        return COMMIT_URL.format(commit=self.id)
+        return settings.COMMIT_URL.format(commit=self.id)
 
     @classmethod
     def from_data(cls, data):
@@ -224,10 +224,10 @@ class Commit(object):
         author = Author.from_data(adata)
         date = Date.from_data(ddata)
         if content:
-            content = content[:-1].replace('\n    ', '\n').decode(CHARSET)
+            content = content[:-1].replace('\n    ', '\n').decode(settings.CHARSET)
         else:
             title = title[:-1]
-        obj = cls(id, author, date, title.decode(CHARSET), content, merge_ids)
+        obj = cls(id, author, date, title.decode(settings.CHARSET), content, merge_ids)
         cls.dictionary[id] = obj
         cls.short_dictionary[id[:7]] = obj
         return obj
@@ -247,18 +247,18 @@ for cdata in data.split('\ncommit '):
             merge_commits[commit.author.email] = []
         merge_commits[commit.author.email].append(commit)
 
-timebase = total.commits[0].date.date - datetime.timedelta(days=ACTIVE_DAYS)
+timebase = total.commits[0].date.date - datetime.timedelta(days=settings.ACTIVE_DAYS)
 
 authors = []
 real_size = 0
 others = Group('other')
-actives = Group('Active users', 'Users who contributed in the last {0} days'.format(ACTIVE_DAYS))
-newfaces = Group('Newfaces', 'Users who contributed his/her first commit in the last {0} days'.format(ACTIVE_DAYS))
+actives = Group('Active users', 'Users who contributed in the last {0} days'.format(settings.ACTIVE_DAYS))
+newfaces = Group('Newfaces', 'Users who contributed his/her first commit in the last {0} days'.format(settings.ACTIVE_DAYS))
 
 active_commits = Author('active')
 
 groups = {}
-for gdata in GROUPS:
+for gdata in settings.GROUPS:
     group = Group(gdata['name'])
     group.settings = gdata
     groups[group.groupname] = group
@@ -267,7 +267,7 @@ for i, (rank, author) in enumerate(Author.ranks()):
     author.tag = author.safe_email
     author.rank = round(rank, 1)
     authors.append(author)
-    if i > CHART_SIZE - (len(groups) + 2):
+    if i > settings.CHART_SIZE - (len(groups) + 2):
         if not real_size:
             real_size = i
         others.authors.append(author)
@@ -293,8 +293,7 @@ mauthors.sort(key=lambda author: -len(merge_commits[author.email]))
 mcommits = reduce(lambda a, b: a + b, merge_commits.values(), [])
 
 rendered = template.render(
-    TITLE=TITLE, REPO_URL=REPO_URL,
-    ACTIVE_DAYS=ACTIVE_DAYS,
+    settings=settings,
     size=real_size, authors=authors, others=others, total=total,
     actives=actives, active_commits=active_commits, newfaces=newfaces,
     groups=sorted_groups, mauthors=mauthors, mcommits=mcommits, mcommitd=merge_commits,
@@ -302,16 +301,16 @@ rendered = template.render(
     numformat=lambda n: '{:,}'.format(n),
 )
 
-if OUTPUT_FILE:
-    outfile = lopen(OUTPUT_FILE, 'w')
+if settings.OUTPUT_FILE:
+    outfile = lopen(settings.OUTPUT_FILE, 'w')
 else:
     outfile = sys.stdout
-outfile.write(rendered.encode(CHARSET))
+outfile.write(rendered.encode(settings.CHARSET))
 
-if AUTHOR_FILE:
+if settings.AUTHOR_FILE:
     authors = list(Author.dictionary.values())
     authors.sort(key=lambda author: author.name.lower())
-    authorfile = lopen(AUTHOR_FILE, 'w')
+    authorfile = lopen(settings.AUTHOR_FILE, 'w')
     for author in authors:
-        authorfile.write(u'{name} <{email}>\n'.format(name=author.name, email=author.email).encode(CHARSET))
+        authorfile.write(u'{name} <{email}>\n'.format(name=author.name, email=author.email).encode(settings.CHARSET))
 
