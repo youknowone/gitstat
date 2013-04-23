@@ -10,6 +10,10 @@ INPUT_FILE = 'log.txt' # None for stdin
 OUTPUT_FILE = None # None for stdout
 AUTHOR_FILE = 'authors.txt'
 
+COMMIT_DETAIL_COUNT = 1
+COMMIT_ABSTRACT_COUNT = 4
+COMMIT_LIST_COUNT = 15
+
 COMMIT_URL = 'http://github.com/<id>/<repo>/commit/{commit}'
 
 ACTIVE_DAYS = 30

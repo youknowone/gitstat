@@ -4,6 +4,8 @@
     <title>{{ settings.TITLE }} - gitstat</title>
     <style>
         .fixed { font-family: "Monospace" };
+        dd { clear: both; float: left; }
+        dt { float: left; left-margin: 2em };
     </style>
     <!--Load the AJAX API-->
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -166,14 +168,12 @@
             {% endif %}
             <dt>Groups:</dt>
               <dd>{% for group in [actives, newfaces] + groups %}{% if author in group.authors %}<a href="#group-{{ group.groupname }}">{{ group.groupname }}</a> {% endif %}{% endfor %}</dd>
-            <dt>Commit Count:<dt>
+            <dt>Commit Count:</dt>
               <dd>{{ author.commits|length }} (#{{ author.rank }})</dd>
-            <dt>Commit Rate:<dt>
+            <dt>Commit Rate:</dt>
               <dd>{{ (author.commits|length * 100 / total.commits|length) |round(1) }}%</dd>
             <dt>Commit Impact:</dt>
               <dd>{{ author.commit_impact }} of {{ total.commit_impact }} </dd>
-            <dt>Groups:</dt>
-              <dd></dd>
             <dt>Search on Github:</dt>
               <dd><a href="https://github.com/search?q={{ author.names[0] }}&type=Users">{{ author.names[0] }} on Github</a> or <a href="https://github.com/search?q={{ author.email.split('@')[0] }}&type=Users">{{ author.email.split('@')[0] }} on Github</a></dd>
           </dl>
@@ -181,12 +181,12 @@
           <section><h1>Commits</h1>
           <ul>
             <li>
-            {% for commit in author.commits[:101] -%}
-            {% if loop.index <= 100 -%}
+            {% for commit in author.commits[:settings.COMMIT_LIST_COUNT + 1] -%}
+            {% if loop.index <= settings.COMMIT_LIST_COUNT -%}
               <a href="{{ commit.url }}" title="{{ commit.title }}">{{ commit.id[:7] }}</a>
-              {%- if loop.index <= 10 %}: {{ commit.date.short }} {{ commit.title }}
+              {%- if loop.index <= settings.COMMIT_ABSTRACT_COUNT %}: {{ commit.date.short }} {{ commit.title }}
                 {%- if commit.content -%}
-                  {% if loop.first -%}
+                  {% if loop.index <= settings.COMMIT_DETAIL_COUNT -%}
                     <dl><dd>{{ commit.content }}</dd></dl>
                   {%- else -%}
                     (<abbr title="{{ commit.content }}">...</abbr>)
