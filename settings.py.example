@@ -18,6 +18,8 @@ COMMIT_URL = 'http://github.com/<id>/<repo>/commit/{commit}'
 
 ACTIVE_DAYS = 30
 
+GOOGLE_ANALYTICS = None
+
 ALIASES = {
     'a@example.com': 'b@example.com', # Make a@ as alias of b@
 }
