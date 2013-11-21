@@ -1,22 +1,15 @@
 
-TITLE = '<Repository>'
-REPO_URL = ''
+# See settings.py for more options
 
-CHART_SIZE = 90 # Maybe Google limit?
-CHARSET = 'utf-8'
+TITLE = '<Repository>'
 
 TEMPLATE_FILE = 'template.html'
 INPUT_FILE = 'log.txt' # None for stdin
 OUTPUT_FILE = None # None for stdout
 AUTHOR_FILE = 'authors.txt'
 
-COMMIT_DETAIL_COUNT = 1
-COMMIT_ABSTRACT_COUNT = 4
-COMMIT_LIST_COUNT = 15
-
+REPO_URL = 'https://github.com/<id>/<repo>/tree/<branch>'
 COMMIT_URL = 'http://github.com/<id>/<repo>/commit/{commit}'
-
-ACTIVE_DAYS = 30
 
 GOOGLE_ANALYTICS = None
 
