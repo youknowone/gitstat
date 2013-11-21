@@ -66,8 +66,7 @@ ALIASES = {
     'mbrubeck@cs.hmc.edu': 'mbrubeck@limpet.net',
     'mmeyerho@andrew': 'mmeyerho@andrew.cmu.edu',
     'ysson83@gmail.com': 'ysoo.son@samsung.com',
-    'ysoo.son@samsum.com': 'ysoo.son@samsung.com',
-    #'=125axel125@gmail.com': 'mark.edward.x@gmail.com',
+    '=125axel125@gmail.com': 'mark.edward.x@gmail.com',
     'B.Steinbrink@gmx.de': 'bsteinbr@gmail.com',
     'georges.dubus@gmail.com': 'georges.dubus@compiletoi.net',
     'Heather@cynede.net': 'heather@cynede.net',
@@ -75,8 +74,11 @@ ALIASES = {
     'sstewartgallus00@mylangara.bc.ca': 'sstewartgallus00@langara.bc.ca',
     'me@luqman.ca': 'laden@csclub.uwaterloo.ca', # reverse?
     'laden@mozilla.com': 'laden@csclub.uwaterloo.ca', # reverse?
-    'eholk@mozilla.com': 'eric.holk@gmail.com', # reverse?
+    'eholk@mozilla.com': 'eholk@cs.indiana.edu',
+    'eric.holk@gmail.com': 'eholk@cs.indiana.edu',
     'eslaughter@mozilla.com': 'elliottslaughter@gmail.com', #reverse? 
+    'ereed@mozilla.com': 'ecreed@cs.washington.edu',
+    'bruphili@student.ethz.ch': 'blei42@gmail.com',
 }
 
 GROUPS = [
@@ -99,7 +101,7 @@ GROUPS = [
     {
         'name': 'Korean Rust User Group',
         'url': 'http://rust-kr.org/', # written in Rust!
-        'filter': lambda author: author.email in ['sanxiyn@gmail.com', 'kang.seonghoon@mearie.org', 'jeong@youknowone.org', 'jihyun@nclab.kaist.ac.kr', 'klutzytheklutzy@gmail.com'],
+        'filter': lambda author: author.email in ['sanxiyn@gmail.com', 'kang.seonghoon@mearie.org', 'jeong@youknowone.org', 'jihyun@nclab.kaist.ac.kr', 'klutzytheklutzy@gmail.com', 'wdlee91@gmail.com'],
     },
     {
         'name': 'Unidentified',
