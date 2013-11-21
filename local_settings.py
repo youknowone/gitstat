@@ -98,7 +98,7 @@ GROUPS = [
     },
     {
         'name': 'Korean Rust User Group',
-        'url': 'http://www.reddit.com/r/rust/comments/18auia/korean_rust_irc_channel/',
+        'url': 'http://rust-kr.org/', # written in Rust!
         'filter': lambda author: author.email in ['sanxiyn@gmail.com', 'kang.seonghoon@mearie.org', 'jeong@youknowone.org', 'jihyun@nclab.kaist.ac.kr', 'klutzytheklutzy@gmail.com'],
     },
     {
