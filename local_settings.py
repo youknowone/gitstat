@@ -87,7 +87,7 @@ GROUPS = [
     {
         'name': 'Samsung Electronics',
         'url': 'http://www.samsung.com/',
-        'filter': lambda author: 'samsung.com' in author.email.split('@')[-1] or author.email in ['sanxiyn@gmail.com', 'ilyoan@gmail.com', 'ysson83@gmail.com', 'ladinjin@hanmail.net', 'vivekgalatage@gmail.com', 'gohanpra@gmail.com', 'daniel@glazman.org'],
+        'filter': lambda author: 'samsung.com' in author.email.split('@')[-1] or author.email in ['sanxiyn@gmail.com', 'ilyoan@gmail.com', 'ysson83@gmail.com', 'ladinjin@hanmail.net', 'vivekgalatage@gmail.com', 'gohanpra@gmail.com', 'daniel@glazman.org', 'michael.blumenkrantz@gmail.com'],
     },
     {
         'name': 'Unidentified',
