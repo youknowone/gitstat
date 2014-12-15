@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
+# See settings.py for more options
 
-#-*- coding: utf-8 -*-
-TITLE = 'Servo'
+TITLE = 'Servo commit statistics'
 
 TEMPLATE_FILE = 'template.html'
 INPUT_FILE = 'log.txt' # None for stdin
@@ -42,7 +43,12 @@ ALIASES = {
     'graydon@pobox.com': 'graydon@mozilla.com', # Make a@ as alias of b@
     'graydon@4632428-PC.(none)': 'graydon@mozilla.com',
     'as@hacks.yi.org': 'mad.one@gmail.com',
+    'metajack+bors@gmail.com': 'release+servo@mozilla.com',
+    'Manishearth@users.noreply.github.com': 'manishsmail@gmail.com',
+    'cavalcantii@gmail.com': 'a.cavalcanti@samsung.com',
+    'a.cavalcanti@sisa.samsung.com': 'a.cavalcanti@samsung.com',
     'andersrb@gmail.com': 'banderson@mozilla.com',
+    'brunoabinader@gmail.com': 'bruno.d@partner.samsung.com',
     'etryzelaar@iqt.org': 'erick.tryzelaar@gmail.com',
     'jason.orendorff@gmail.com': 'jorendorff@mozilla.com',
     'jason@mozmac-2.local': 'jorendorff@mozilla.com',
@@ -72,6 +78,12 @@ ALIASES = {
     'lkuper@mozilla.com': 'lindsey@composition.al', #reverse?
 }
 
+MOZILLA = ["josh@joshmatthews.net", "jack@metajack.im", "gw@intuitionlibrary.com", "mbrubeck@limpet.net", "niko@alum.mit.edu", "bobbyholley@gmail.com", "james@hoppipolla.co.uk", "joshmoz@gmail.com",
+           "sean.monstar@gmail.com", "andersrb@gmail.com", "shout@ozten.com", "bzbarsky@mit.edu", "ben@wanderview.com", "simon.sapin@exyr.org", "fabrice@desre.org"]
+SAMSUNG = ["sanxiyn@gmail.com", "hykim0777@gmail.com", "michael.blumenkrantz@gmail.com", "jun0cho@gmail.com", "cavalcantii@gmail.com", "brunoabinader@gmail.com"]
+COMMUNITY = ["ms2ger@gmail.com", "saneyuki.snyk@gmail.com", "saurabhanandiit@gmail.com", "utatane.tea@gmail.com", "sankha93@gmail.com", "daniel@glazman.org", "evilpies@gmail.com",
+             "pylaurent1314@gmail.com", "manishsmail@gmail.com"]
+
 GROUPS = [
     {
         'name': 'Bot',
@@ -80,18 +92,26 @@ GROUPS = [
         'priority': 1,
     },
     {
-        'name': 'Mozilla',
+        'name': 'Mozilla Corporation',
         'url': 'http://www.mozilla.org/',
-        'filter': lambda author: author.email.endswith('@mozilla.com') or author.email in ['pcwalton@mimiga.net', 'chevalier@alum.wellesley.edu', 'niko@alum.mit.edu', 'sully@msully.net', 'eric.holk@gmail.com', 'elliottslaughter@gmail.com', 'laden@csclub.uwaterloo.ca', 'lindsey@composition.al', ],
+        'filter': lambda author: author.email in MOZILLA or '@mozilla.com' in author.email,
     },
     {
         'name': 'Samsung Electronics',
         'url': 'http://www.samsung.com/',
-        'filter': lambda author: 'samsung.com' in author.email.split('@')[-1] or author.email in ['sanxiyn@gmail.com', 'ilyoan@gmail.com', 'ysson83@gmail.com', 'ladinjin@hanmail.net', 'vivekgalatage@gmail.com', 'gohanpra@gmail.com', 'daniel@glazman.org', 'michael.blumenkrantz@gmail.com'],
+        'filter': lambda author: '@samsung.com' in author.email or author.email in SAMSUNG,
+    },
+    {
+        'name': 'Igalia',
+        'filter': lambda author: '@igalia.com' in author.email,
+    },
+    {
+        'name': 'Mozilla Community',
+        'filter': lambda author: author.email in COMMUNITY,
     },
     {
         'name': 'Unidentified',
         'description': 'Strange emails...',
-        'filter': lambda author: author.email.endswith('(none)') or author.email.endswith('debian.localdomain'),
+        'filter': lambda author: author.email.endswith('(none)') or author.email.endswith('.localdomain')
     },
 ]
