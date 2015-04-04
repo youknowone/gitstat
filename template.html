@@ -190,9 +190,9 @@
               {%- if loop.index <= settings.COMMIT_ABSTRACT_COUNT %}: {{ commit.date.short }} {{ commit.title }}
                 {%- if commit.content -%}
                   {% if loop.index <= settings.COMMIT_DETAIL_COUNT -%}
-                    <dl><dd>{{ commit.content }}</dd></dl>
+                    <dl><dd>{{ commit.content|escape }}</dd></dl>
                   {%- else -%}
-                    (<abbr title="{{ commit.content }}">...</abbr>)
+                    (<abbr title="{{ commit.content|escape }}">...</abbr>)
                   {%- endif %}
                 {% endif -%}
                 {% if commit.mergeset %}
